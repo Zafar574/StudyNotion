@@ -113,7 +113,8 @@ exports.deleteSubSection = async (req, res) => {
                 $pull: {
                     subSection: subSectionId,
                 },
-            }
+            },
+            {new:true},
         )
         const subSection = await SubSection.findByIdAndDelete({ _id: subSectionId });
 
