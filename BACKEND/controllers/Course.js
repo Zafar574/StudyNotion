@@ -1,8 +1,7 @@
 const Course = require("../models/Course");
-const Tag = require("../models/tags");
+const Category = require("../models/Category");
 const User = require("../models/User");
 const {uploadImageToCloudinary} = require("../utils/imageUploader");
-
 //function to create a new Course
 exports.createCourse = async (req, res) => {
     try {
@@ -14,6 +13,7 @@ exports.createCourse = async (req, res) => {
             whatYouWillLearn, 
             price, 
             tag,
+            category,
         } = req.body;
 
         //get thumbnail image from request files
@@ -31,7 +31,7 @@ exports.createCourse = async (req, res) => {
         ) {
             res.status(400).json({
                 success: false,
-                message: 'All Filds are mandatory',
+                message: 'All Fields are mandatory',
             });
         }
         const userId=req.user.id;
@@ -48,8 +48,8 @@ exports.createCourse = async (req, res) => {
         }
 
         //check given Category is valid or not
-        const tagDetails = await Tag.findById(tag);
-        if(!tagDetails) {
+        const categoryDetails = await Category.findById(category);
+        if(!categoryDetails) {
             return res.status(404).json({
                 success: false,
                 message: 'Category Details Not Found',
@@ -69,8 +69,9 @@ exports.createCourse = async (req, res) => {
             instructor: instructorDetails._id,
             whatYouWillLearn: whatYouWillLearn,
             price,
-            tag: tagDetails._id,
-            thumbnail:thumbnailImage.secure_url,
+            tag: tag,
+            Category: categoryDetails._id,
+            thumbnail: thumbnailImage.secure_url,
         });
 
         //add the new Course to the user schema of instructor
@@ -86,8 +87,8 @@ exports.createCourse = async (req, res) => {
         );
 
         //Add the new course to the categories
-        await Tag.findByIdAndUpdate(
-            { _id: tagDetails._id, },
+        await Category.findByIdAndUpdate(
+            { _id: category },
             {
                 $push: {
                     course: newCourse._id,
@@ -97,7 +98,7 @@ exports.createCourse = async (req, res) => {
         );
 
         //Return the new course and a success message
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             data: newCourse,
             message: "Course Created Successfully",
