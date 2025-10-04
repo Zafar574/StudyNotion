@@ -116,7 +116,7 @@ exports.createCourse = async (req, res) => {
 };
 
 //getAllCourses handler function
-exports.showAllCourses = async (req, res) => {
+exports.getAllCourses = async (req, res) => {
     try {
         const allCourses = await Course.find(
             {}, 
