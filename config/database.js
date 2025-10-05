@@ -2,10 +2,7 @@ require("dotenv").config();
 const mongoose = require ('mongoose');
 
 exports.connect = () => {
-    mongoose.connect(process.env.MONGODB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+    mongoose.connect(process.env.MONGODB_URL)
     .then(() => console.log("DB Connection Established Successfully"))
     .catch((error) => {
         console.log("DB Connection Failed");

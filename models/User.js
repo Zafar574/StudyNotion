@@ -23,8 +23,16 @@ const mongoose = require('mongoose');
         },
         accountType: {
             type: String,
-            enum: ['Admin', 'Student', 'Instructor'],
+            enum: ["Admin", "Student", "Instructor"],
             required: true
+        },
+        active: {
+            type: Boolean,
+            default: true,
+        },
+        approved: {
+            type: Boolean,
+            default: true,
         },
         additionalDetails: {
             type: mongoose.Schema.Types.ObjectId,
@@ -41,7 +49,7 @@ const mongoose = require('mongoose');
             type : String,
             required : true,
         },
-         token: {
+        token: {
             type : String,
         },
         resetPasswordExpires: {
@@ -54,6 +62,8 @@ const mongoose = require('mongoose');
             }
         ],
     },
+    //Add timestamps for when the document is created and last modified
+    {timestamps: true}
 );
 
 module.exports = mongoose.model("User", userSchema);

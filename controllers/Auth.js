@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const otpGenerator = require('otp-generator');
 const mailSender = require('../utils/mailSender');
-const { passwordUpdated } = require('../mail/templates/passwordUpdate');
+const {passwordUpdated} = require('../mail/templates/passwordUpdate');
 const Profile = require('../models/Profile');
 require('dotenv').config();
 
@@ -93,7 +93,7 @@ exports.signup = async (req, res) => {
         ) {
             return res.status(403).json({
                 success: false,
-                message: 'All Fields are required',
+                message: 'ok All Fields are required',
             });
         }
         //check if Password and confirm password matches or not?
@@ -127,13 +127,17 @@ exports.signup = async (req, res) => {
             //Invalid OTP
             return res.status(400).json({
                 success: false,
-                message: 'The OTP is not valid',
+                message: 'The OTP is not wrong',
             });
         }
     
         //Hash Password
         const hashedPassword = await bcrypt.hash(password, 10);
     
+        //Create the user
+        let approved = '';
+        approved === 'Instructor' ? (approved = false)  : (approved = true);
+
         //create the additional profile for user
         const profileDetails = await  Profile.create({
             gender : null,
@@ -149,6 +153,7 @@ exports.signup = async (req, res) => {
             contactNumber,
             password: hashedPassword,
             accountType: accountType,
+            approved: approved,
             additionalDetails: profileDetails._id,
             image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
         });
@@ -243,8 +248,8 @@ exports.changePassword = async (req, res) => {
         //Get user data from req.user
         const userDetails = await User.findById(req.user.id);
         
-        //get oldPassword, newPassword
-        const {oldPassword, newPassword} = req.body;
+        //get oldPassword, newPassword, confirmPassword
+        const {oldPassword, newPassword, confirmNewPassword} = req.body;
 
         //Validate old password
         const isPasswordMatch = await bcrypt.compare(
@@ -262,25 +267,33 @@ exports.changePassword = async (req, res) => {
             })
         }
 
+        //Match new password and confirm new password
+        if(newPassword !== confirmNewPassword) {
+            //if new password and confirm new password don not match, return 400 (Bad Request) error
+            return res.status(400).json({
+                success: false,
+                message: 'New Password and Confirm Password Do Not Match',
+            })
+        }
+
         //update password
         const encryptedPassword = await bcrypt.hash(newPassword, 10);
         const updatedUserDetails = await User.findByIdAndUpdate(
             req.user.id,
-            { password: encryptedPassword },
-            { new: true }
+            {password: encryptedPassword},
+            {new: true}
         );
 
         //send notification email
         try {
             const emailResponse = await mailSender(
                 updatedUserDetails.email,
-                `Password Updated Successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`,
                 passwordUpdated(
                     updatedUserDetails.email,
-                    updatedUserDetails.firstName,
+                    `Password Updated Successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
                 )
-            )
-            console.log('Email sent successfully................', emailResponse);
+            );
+            console.log('Email sent successfully: ', emailResponse.response);
         } catch (error) {
             //if there's an error sending the email, log the error and return a 500 (Internal Server Error) error
             console.log('Error Occurred While Sending Email: ', error);
