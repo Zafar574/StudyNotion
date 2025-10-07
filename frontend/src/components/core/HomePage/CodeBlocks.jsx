@@ -1,4 +1,3 @@
-import React from 'react'
 import CTAButton from '../../common/Button'
 import {FaArrowRight} from 'react-icons/fa'
 import { TypeAnimation } from 'react-type-animation'
