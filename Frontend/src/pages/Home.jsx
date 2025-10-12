@@ -6,7 +6,7 @@ import { Link } from "react-router-dom"
 import Banner from "../assets/Images/banner.mp4"
 // Component Imports
 import Footer from "../components/common/Footer"
-//import ReviewSlider from "../components/common/ReviewSlider"
+import ReviewSlider from "../components/common/ReviewSlider"
 import CTAButton from "../components/common/Button"
 import CodeBlocks from "../components/core/HomePage/CodeBlocks"
 import ExploreMore from "../components/core/HomePage/ExploreMore"
@@ -19,7 +19,7 @@ function Home() {
   return (
     <div>
       {/* Section 1 */}
-      <div className="relative mx-auto  bg-richblack-500 flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8 text-white">
+      <div className="relative mx-auto flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8 text-white">
         {/* Become a Instructor Button */}
         <Link to={"/signup"}>
           <div className="group mx-auto mt-16 w-fit rounded-full bg-richblack-800 p-1 font-bold text-richblack-200 drop-shadow-[0_1.5px_rgba(255,255,255,0.25)] transition-all duration-200 hover:scale-95 hover:drop-shadow-none">
@@ -35,7 +35,6 @@ function Home() {
           Empower Your Future with
           <HighlightText text={"Coding Skills"} />
         </div>
-        
 
         {/* Sub Heading */}
         <div className="-mt-3 w-[90%] text-center text-lg font-bold text-richblack-300">
@@ -127,7 +126,7 @@ function Home() {
         </div>
 
         {/* Explore Section */}
-        /*<ExploreMore />
+        <ExploreMore />
       </div>
 
       {/* Section 2 */}
@@ -151,15 +150,12 @@ function Home() {
         </div>
 
         <div className="mx-auto flex w-11/12 max-w-maxContent flex-col items-center justify-between gap-8 ">
-
           {/* Job that is in Demand - Section 1 */}
           <div className="mb-10 mt-[-100px] flex flex-col justify-between gap-7 lg:mt-20 lg:flex-row lg:gap-0">
-
             <div className="text-4xl font-semibold lg:w-[45%] ">
               Get the skills you need for a{" "}
               <HighlightText text={"job that is in demand."} />
             </div>
-
             <div className="flex flex-col items-start gap-10 lg:w-[40%]">
               <div className="text-[16px]">
                 The modern StudyNotion is the dictates its own terms. Today, to
@@ -170,7 +166,6 @@ function Home() {
                 <div className="">Learn More</div>
               </CTAButton>
             </div>
-
           </div>
 
           {/* Timeline Section - Section 2 */}
