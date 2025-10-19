@@ -83,7 +83,9 @@ export function signUp(
 }
 
 export function login(email, password, navigate) {
+    
     return async (dispatch) => {
+        
         const toastId = toast.loading("Loading...")
         dispatch(setLoading(true))
         try {
@@ -108,7 +110,7 @@ export function login(email, password, navigate) {
             navigate("/dashboard/my-profile")
         } catch(error) {
             console.log("LOGIN API ERROR..............", error)
-            toast.error("Login Failed")
+            toast.error("Login Failed vvv")
         }
         dispatch(setLoading(false))
         toast.dismiss(toastId)

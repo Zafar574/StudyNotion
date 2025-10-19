@@ -67,19 +67,6 @@ function SignupForm() {
         setAccountType(ACCOUNT_TYPE.STUDENT)
     }
 
-    //data to pass to Tab component
-    const tabData = [
-        {
-            id: 1, 
-            tabName: "Student",
-            type: ACCOUNT_TYPE.STUDENT,
-        },
-        {
-            id: 2, 
-            tabName: "Instructor",
-            type: ACCOUNT_TYPE.INSTRUCTOR,
-        },
-    ]
 
     return (
         <div>

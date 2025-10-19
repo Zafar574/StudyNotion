@@ -225,9 +225,11 @@ exports.login = async (req, res) => {
             });
             
         } else {
+            console.log("incorrect password")
             return res.status(401).json({
                 success: false,
                 message: `Password Is Incorrect`,
+                
             });
         }
 
