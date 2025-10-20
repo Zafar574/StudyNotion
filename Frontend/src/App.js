@@ -10,6 +10,10 @@ import UpdatePassword from "./pages/UpdatePassword";
 import VerifyEmail from "./pages/VerifyEmail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import MyProfile from "./components/core/Dashboard/MyProfile";
+import Dashboard from "./pages/Dashboard";
+import PrivateRoute from "./components/core/Auth/PrivateRoute";
+import Error from "./pages/Error";
 function App() {
   return (
     <div>
@@ -67,9 +71,46 @@ function App() {
         }
       />
 
-        <Route path="/contact" element={<Contact />} />
+      <Route path="/contact" element={<Contact />} />
 
+      <Route 
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+        
+      >
+        <Route path="dashboard/my-profile" element={<MyProfile />} />
+      {/*  <Route path="dashboard/my-profile" element={<MyProfile />} />
+        <Route path="dashboard/Settings" element={<Settings />} />
+
+        {
+          user?.accountType === ACCOUNT_TYPE.STUDENT && (
+            <>
+              <Route path='dashboard/cart' element={<Cart />} />
+              <Route path='dashboard/enrolled-courses' element={<EnrolledCourses />} />
+            </>
+          )
+        }
+
+        {
+          user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
+            <>
+              <Route path="dashboard/instructor" element={<Instructor />} />
+              <Route path="dashboard/add-course" element={<AddCourse />} />
+              <Route path="dashboard/my-courses" element={<MyCourses />} />
+              <Route path="dashboard/edit-course/:courseId" element={<EditCourse />} />
+            </>
+          )
+        }
+      */}
+      </Route>
+
+      <Route path="*" element={<Error />} />
       </Routes>
+
+
 
     </div>
   );
