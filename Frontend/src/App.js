@@ -14,6 +14,12 @@ import MyProfile from "./components/core/Dashboard/MyProfile";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/core/Auth/PrivateRoute";
 import Error from "./pages/Error";
+import Settings from './components/core/Dashboard/Settings';
+//import { useDispatch, useSelector } from "react-redux";
+//import { ACCOUNT_TYPE } from "./utils/constants";
+//import Cart from './components/core/Dashboard/Cart'
+//import EnrolledCourses from "./components/core/Dashboard/EnrolledCourses";
+import AddCourse from "./components/core/Dashboard/AddCourses";
 function App() {
   return (
     <div>
@@ -82,19 +88,18 @@ function App() {
         
       >
         <Route path="dashboard/my-profile" element={<MyProfile />} />
-      {/*  <Route path="dashboard/my-profile" element={<MyProfile />} />
         <Route path="dashboard/Settings" element={<Settings />} />
 
-        {
+        {/*
           user?.accountType === ACCOUNT_TYPE.STUDENT && (
             <>
               <Route path='dashboard/cart' element={<Cart />} />
               <Route path='dashboard/enrolled-courses' element={<EnrolledCourses />} />
             </>
           )
-        }
-
-        {
+        */}
+        <Route path="dashboard/add-course" element={<AddCourse />} />
+        {/*
           user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
             <>
               <Route path="dashboard/instructor" element={<Instructor />} />
@@ -103,8 +108,7 @@ function App() {
               <Route path="dashboard/edit-course/:courseId" element={<EditCourse />} />
             </>
           )
-        }
-      */}
+        */} 
       </Route>
 
       <Route path="*" element={<Error />} />
