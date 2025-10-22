@@ -27,10 +27,6 @@ export default function SubSectionModal({
     getValues,
   } = useForm()
 
-  // console.log("view", view)
-  // console.log("edit", edit)
-  // console.log("add", add)
-
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
   const { token } = useSelector((state) => state.auth)

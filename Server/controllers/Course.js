@@ -371,15 +371,17 @@ exports.getFullCourseDetails = async (req, res) => {
 
 // Get a list of Course for a given Instructor
 exports.getInstructorCourses = async (req, res) => {
+  console.log("hii3")
   try {
+    console.log("hii3")
     // Get the instructor ID from the authenticated user or request body
     const instructorId = req.user.id
-
+    console.log("hii3")
     // Find all courses belonging to the instructor
     const instructorCourses = await Course.find({
       instructor: instructorId,
     }).sort({ createdAt: -1 })
-
+    console.log("hii4")
     // Return the instructor's courses
     res.status(200).json({
       success: true,
