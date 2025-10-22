@@ -145,6 +145,7 @@ exports.editCourse = async (req, res) => {
     }
 
     // If Thumbnail Image is found, update it
+    //console.log("hii1")
     if (req.files) {
       console.log("thumbnail update")
       const thumbnail = req.files.thumbnailImage
@@ -154,18 +155,19 @@ exports.editCourse = async (req, res) => {
       )
       course.thumbnail = thumbnailImage.secure_url
     }
-
+    //console.log("hii2")
     // Update only the fields that are present in the request body
     for (const key in updates) {
-      if (updates.hasOwnProperty(key)) {
-        if (key === "tag" || key === "instructions") {
-          course[key] = JSON.parse(updates[key])
-        } else {
-          course[key] = updates[key]
-        }
-      }
+      //console.log(key)
+      if (Object.hasOwn(updates, key)) {
+    if (key === "tag" || key === "instructions") {
+      course[key] = JSON.parse(updates[key])
+    } else {
+      course[key] = updates[key]
     }
-
+  }
+    }
+    console.log("hii3")
     await course.save()
 
     const updatedCourse = await Course.findOne({
@@ -186,7 +188,7 @@ exports.editCourse = async (req, res) => {
         },
       })
       .exec()
-
+      console.log("hii4")
     res.json({
       success: true,
       message: "Course updated successfully",

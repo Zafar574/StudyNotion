@@ -18,6 +18,7 @@ const courseSlice = createSlice({
       state.course = action.payload
     },
     setEditCourse: (state, action) => {
+      //console.log("called");
       state.editCourse = action.payload
     },
     setPaymentLoading: (state, action) => {
