@@ -33,7 +33,7 @@ app.use(fileUpload({
 
 app.use(cors({
 
-    origin:"http://localhost:5173",
+    origin: "https://skill-bazar-plum.vercel.app",
 
     credentials:true
 
