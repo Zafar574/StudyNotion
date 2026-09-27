@@ -8,6 +8,7 @@ exports.resetPasswordToken = async (req, res) => {
 
     try {
         //get email from req body
+        console.log('hiia');
         const email = req.body.email;
         //check user for thsi email, email validation
         const user = await User.findOne({email: email});
@@ -30,14 +31,18 @@ exports.resetPasswordToken = async (req, res) => {
         );
         console.log('DETAILS: ', updatedDetails);
         //create url
+        console.log('hiib');
         const url = `http://localhost:3000/update-password/${token}`; 
         //send mail containing the url
+        console.log(`${token}`);
         await mailSender(
+            
             email,
             'Password Reset Link',
             `Your link for email verification is ${url}. Please click this url to reset your password.`
         )
         //return response
+        console.log('hiic');
         return res.json({
             success: true,
             message: 'Email sent successfully, Please Check Your Email To Continue Further',

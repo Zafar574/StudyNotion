@@ -9,17 +9,19 @@ const mailSender = async (email, title, body) => {
                 pass: process.env.MAIL_PASS,
             },
         });
-
+        console.log('hiid');
         let info = await transporter.sendMail({
             from: 'StudyNotion || CodeHelp - by Abhishek',
             to: `${email}`,
             subject: `${title}`,
             html: `${body}`,
         })
+        console.log('inf0');
         console.log(info);
         return info;
 
     } catch (error) {
+        console.log('error');
         console.log(error.message);
     }
 }
