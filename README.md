@@ -6,4 +6,4 @@
 
 I documented the design and page planning process for SkillBazar, including the structure and design approach for the different pages of the platform.
 
-📄 [View Page Design Documentation](./Page-Design-Documentation/Page_Designing_SkillBazar.pdf)
+📄 [View Page Design Documentation](./page_design_documentation/Page_Designing_SkillBazar.pdf)
