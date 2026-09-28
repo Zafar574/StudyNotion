@@ -1,13 +1,107 @@
-import {useEffect,useState} from "react";
-import {Link,useSearchParams} from "react-router-dom";
-import {toast} from "react-toastify";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
 import API from "../services/api";
 import CourseCard from "../components/CourseCard";
-function Catalog(){
- const [categories,setCategories]=useState([]),[courses,setCourses]=useState([]),[selectedCategory,setSelectedCategory]=useState(null),[loading,setLoading]=useState(false); const [searchParams]=useSearchParams();
- async function getCourses(id){try{setLoading(true);const r=await API.get(`/category/${id}/courses`);if(r.data.success)setCourses(r.data.data||[]);setSelectedCategory(id);}catch(e){toast.error(e.response?.data?.message||"Courses could not be loaded");}finally{setLoading(false);}}
- useEffect(()=>{API.get("/category/all").then(r=>{if(r.data.success){const data=r.data.data||[];setCategories(data);const id=searchParams.get("category");if(id&&data.some(c=>c._id===id))getCourses(id);}}).catch(()=>toast.error("Categories could not be loaded"));},[]);
- return <div className="min-h-screen bg-[#080808]"><Navbar/><main className="mx-auto max-w-7xl px-5 py-10 lg:px-8"><div className="rounded-[28px] border border-white/8 bg-[#111] p-7 sm:p-10"><p className="text-sm font-bold uppercase tracking-[.18em] text-yellow-400">Course marketplace</p><div className="mt-2 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><h1 className="text-4xl font-black">Find your next skill.</h1><p className="mt-2 text-zinc-500">Choose a category and discover practical courses.</p></div><span className="text-sm text-zinc-600">{courses.length} course{courses.length!==1?'s':''} shown</span></div><div className="mt-8 flex gap-2 overflow-x-auto pb-2 no-scrollbar"><button onClick={()=>{setSelectedCategory(null);setCourses([])}} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-bold ${selectedCategory===null?'border-yellow-400 bg-yellow-400 text-black':'border-white/10 text-zinc-400 hover:text-white'}`}>All categories</button>{categories.map(c=><button key={c._id} onClick={()=>getCourses(c._id)} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-bold ${selectedCategory===c._id?'border-yellow-400 bg-yellow-400 text-black':'border-white/10 text-zinc-400 hover:text-white'}`}>{c.name}</button>)}</div></div>{selectedCategory===null?<div className="mt-8 rounded-2xl border border-dashed border-white/10 bg-[#111] p-14 text-center"><div className="text-4xl">✦</div><h2 className="mt-4 text-xl font-black">Pick a category to start exploring</h2><p className="mt-2 text-zinc-600">Your course cards will appear here.</p></div>:loading?<div className="mt-8 rounded-2xl border border-white/8 bg-[#111] p-12 text-center text-yellow-400">Loading courses...</div>:courses.length===0?<div className="mt-8 rounded-2xl border border-white/8 bg-[#111] p-12 text-center"><h2 className="text-xl font-black">No courses here yet</h2><p className="mt-2 text-zinc-600">Try another category.</p></div>:<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{courses.map(c=><CourseCard key={c._id} course={c}/>)}</div>}</main></div>;
+function Catalog() {
+  const [categories, setCategories] = useState([]),
+    [courses, setCourses] = useState([]),
+    [selectedCategory, setSelectedCategory] = useState(null),
+    [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  async function getCourses(id) {
+    try {
+      setLoading(true);
+      const r = await API.get(`/category/${id}/courses`);
+      if (r.data.success) setCourses(r.data.data || []);
+      setSelectedCategory(id);
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Courses could not be loaded");
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    API.get("/category/all")
+      .then((r) => {
+        if (r.data.success) {
+          const data = r.data.data || [];
+          setCategories(data);
+          const id = searchParams.get("category");
+          if (id && data.some((c) => c._id === id)) getCourses(id);
+        }
+      })
+      .catch(() => toast.error("Categories could not be loaded"));
+  }, []);
+  return (
+    <div className="min-h-screen bg-[#080808]">
+      <Navbar />
+      <main className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+        <div className="rounded-[28px] border border-white/8 bg-[#111] p-7 sm:p-10">
+          <p className="text-sm font-bold uppercase tracking-[.18em] text-yellow-400">
+            Course marketplace
+          </p>
+          <div className="mt-2 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <h1 className="text-4xl font-black">Find your next skill.</h1>
+              <p className="mt-2 text-zinc-500">
+                Choose a category and discover practical courses.
+              </p>
+            </div>
+            <span className="text-sm text-zinc-600">
+              {courses.length} course{courses.length !== 1 ? "s" : ""} shown
+            </span>
+          </div>
+          <div className="mt-8 flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            <button
+              onClick={() => {
+                setSelectedCategory(null);
+                setCourses([]);
+              }}
+              className={`shrink-0 rounded-full border px-4 py-2 text-sm font-bold ${selectedCategory === null ? "border-yellow-400 bg-yellow-400 text-black" : "border-white/10 text-zinc-400 hover:text-white"}`}
+            >
+              All categories
+            </button>
+            {categories.map((c) => (
+              <button
+                key={c._id}
+                onClick={() => getCourses(c._id)}
+                className={`shrink-0 rounded-full border px-4 py-2 text-sm font-bold ${selectedCategory === c._id ? "border-yellow-400 bg-yellow-400 text-black" : "border-white/10 text-zinc-400 hover:text-white"}`}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        </div>
+        {selectedCategory === null ? (
+          <div className="mt-8 rounded-2xl border border-dashed border-white/10 bg-[#111] p-14 text-center">
+            <div className="text-4xl">✦</div>
+            <h2 className="mt-4 text-xl font-black">
+              Pick a category to start exploring
+            </h2>
+            <p className="mt-2 text-zinc-600">
+              Your course cards will appear here.
+            </p>
+          </div>
+        ) : loading ? (
+          <div className="mt-8 rounded-2xl border border-white/8 bg-[#111] p-12 text-center text-yellow-400">
+            Loading courses...
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="mt-8 rounded-2xl border border-white/8 bg-[#111] p-12 text-center">
+            <h2 className="text-xl font-black">No courses here yet</h2>
+            <p className="mt-2 text-zinc-600">Try another category.</p>
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {courses.map((c) => (
+              <CourseCard key={c._id} course={c} />
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
 }
 export default Catalog;

@@ -1,7 +1,110 @@
-import {useEffect,useState} from "react";
-import {Link,useParams} from "react-router-dom";
-import {toast} from "react-toastify";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
 import API from "../services/api";
-function LearnCourse(){const {id}=useParams();const [course,setCourse]=useState(null);const [loading,setLoading]=useState(true);const [selected,setSelected]=useState(null);useEffect(()=>{API.get(`/enrollment/learn/${id}`).then(r=>{if(r.data.success){setCourse(r.data.data);if(r.data.data.lectures?.length)setSelected(r.data.data.lectures[0])}}).catch(e=>toast.error(e.response?.data?.message||"Course could not be loaded")).finally(()=>setLoading(false))},[id]);if(loading)return <div className="min-h-screen bg-[#080808]"><Navbar/><div className="p-8 text-yellow-400">Loading course...</div></div>;if(!course)return <div className="min-h-screen bg-[#080808]"><Navbar/><div className="p-8 text-red-400">Course not found.</div></div>;return <div className="min-h-screen bg-[#080808]"><Navbar/><main className="mx-auto max-w-7xl px-5 py-8 lg:px-8"><Link to="/student/profile" className="text-sm font-bold text-yellow-400">← My courses</Link><div className="mt-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-yellow-400">Now learning</p><h1 className="mt-2 text-3xl font-black">{course.title}</h1><p className="mt-1 text-sm text-zinc-600">By {course.teacher?.name}</p></div><span className="rounded-full border border-white/8 px-3 py-1.5 text-xs font-bold text-zinc-500">{course.lectures?.length||0} lectures</span></div><div className="mt-8 grid gap-5 lg:grid-cols-[1fr_330px]"><div><div className="overflow-hidden rounded-3xl border border-white/8 bg-black shadow-2xl">{selected?<video key={selected.video} src={selected.video} controls className="aspect-video w-full"/>:<div className="aspect-video grid place-items-center text-zinc-700">No lectures available.</div>}</div>{selected&&<div className="mt-5 rounded-2xl border border-white/8 bg-[#111] p-5"><p className="text-xs font-bold uppercase tracking-widest text-yellow-400">Current lecture</p><h2 className="mt-2 text-xl font-black">{selected.title}</h2></div>}</div><aside className="h-fit rounded-3xl border border-white/8 bg-[#111] p-4 lg:sticky lg:top-24"><h2 className="px-2 pb-3 text-lg font-black">Course content</h2><div className="space-y-1">{course.lectures?.map((l,i)=><button key={l._id||i} onClick={()=>setSelected(l)} className={`w-full rounded-xl p-3 text-left text-sm ${selected===l?"bg-yellow-400 font-black text-black":"text-zinc-400 hover:bg-white/5 hover:text-white"}`}><span className="mr-3 font-black">{String(i+1).padStart(2,"0")}</span>{l.title}</button>)}</div></aside></div></main></div>}
+function LearnCourse() {
+  const { id } = useParams();
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState(null);
+  useEffect(() => {
+    API.get(`/enrollment/learn/${id}`)
+      .then((r) => {
+        if (r.data.success) {
+          setCourse(r.data.data);
+          if (r.data.data.lectures?.length)
+            setSelected(r.data.data.lectures[0]);
+        }
+      })
+      .catch((e) =>
+        toast.error(e.response?.data?.message || "Course could not be loaded"),
+      )
+      .finally(() => setLoading(false));
+  }, [id]);
+  if (loading)
+    return (
+      <div className="min-h-screen bg-[#080808]">
+        <Navbar />
+        <div className="p-8 text-yellow-400">Loading course...</div>
+      </div>
+    );
+  if (!course)
+    return (
+      <div className="min-h-screen bg-[#080808]">
+        <Navbar />
+        <div className="p-8 text-red-400">Course not found.</div>
+      </div>
+    );
+  return (
+    <div className="min-h-screen bg-[#080808]">
+      <Navbar />
+      <main className="mx-auto max-w-7xl px-5 py-8 lg:px-8">
+        <Link
+          to="/student/profile"
+          className="text-sm font-bold text-yellow-400"
+        >
+          ← My courses
+        </Link>
+        <div className="mt-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[.18em] text-yellow-400">
+              Now learning
+            </p>
+            <h1 className="mt-2 text-3xl font-black">{course.title}</h1>
+            <p className="mt-1 text-sm text-zinc-600">
+              By {course.teacher?.name}
+            </p>
+          </div>
+          <span className="rounded-full border border-white/8 px-3 py-1.5 text-xs font-bold text-zinc-500">
+            {course.lectures?.length || 0} lectures
+          </span>
+        </div>
+        <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_330px]">
+          <div>
+            <div className="overflow-hidden rounded-3xl border border-white/8 bg-black shadow-2xl">
+              {selected ? (
+                <video
+                  key={selected.video}
+                  src={selected.video}
+                  controls
+                  className="aspect-video w-full"
+                />
+              ) : (
+                <div className="aspect-video grid place-items-center text-zinc-700">
+                  No lectures available.
+                </div>
+              )}
+            </div>
+            {selected && (
+              <div className="mt-5 rounded-2xl border border-white/8 bg-[#111] p-5">
+                <p className="text-xs font-bold uppercase tracking-widest text-yellow-400">
+                  Current lecture
+                </p>
+                <h2 className="mt-2 text-xl font-black">{selected.title}</h2>
+              </div>
+            )}
+          </div>
+          <aside className="h-fit rounded-3xl border border-white/8 bg-[#111] p-4 lg:sticky lg:top-24">
+            <h2 className="px-2 pb-3 text-lg font-black">Course content</h2>
+            <div className="space-y-1">
+              {course.lectures?.map((l, i) => (
+                <button
+                  key={l._id || i}
+                  onClick={() => setSelected(l)}
+                  className={`w-full rounded-xl p-3 text-left text-sm ${selected === l ? "bg-yellow-400 font-black text-black" : "text-zinc-400 hover:bg-white/5 hover:text-white"}`}
+                >
+                  <span className="mr-3 font-black">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {l.title}
+                </button>
+              ))}
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+  );
+}
 export default LearnCourse;

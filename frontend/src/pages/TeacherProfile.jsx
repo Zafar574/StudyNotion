@@ -1,20 +1,174 @@
-import {useEffect,useState} from "react";
-import {Link} from "react-router-dom";
-import {toast} from "react-toastify";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import Navbar from "../components/Navbar";
 import API from "../services/api";
-import {useAuth} from "../context/AuthContext";
-const fallback="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1000&q=80";
-function TeacherProfile(){
- const {user}=useAuth(); const [courses,setCourses]=useState([]); const [loading,setLoading]=useState(true);
- async function getCourses(){try{const r=await API.get("/course/teacher-courses"); if(r.data.success)setCourses(r.data.data||[]);}catch(e){toast.error(e.response?.data?.message||"Courses could not be loaded");}finally{setLoading(false);}}
- async function publishCourse(id){try{const r=await API.put(`/course/publish/${id}`);if(r.data.success){toast.success("Course published successfully");getCourses();}}catch(e){toast.error(e.response?.data?.message||"Course could not be published");}}
- useEffect(()=>{if(user?.id)getCourses();},[user]);
- return <div className="min-h-screen bg-[#080808]"><Navbar/><main className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
- <section className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[#111] p-7 sm:p-9"><div className="absolute right-0 top-0 h-48 w-48 rounded-full bg-yellow-400/10 blur-3xl"/><div className="relative flex flex-col gap-7 sm:flex-row sm:items-center sm:justify-between"><div className="flex items-center gap-5"><div className="grid h-20 w-20 place-items-center rounded-2xl bg-yellow-400 text-3xl font-black text-black">{user?.name?.charAt(0)?.toUpperCase()}</div><div><p className="text-xs font-bold uppercase tracking-[.18em] text-yellow-400">Teacher dashboard</p><h1 className="mt-1 text-3xl font-black">{user?.name}</h1><p className="mt-1 text-zinc-500">{user?.email}</p></div></div><Link to="/teacher/build-course" className="rounded-xl bg-yellow-400 px-5 py-3 text-center text-sm font-black text-black hover:bg-yellow-300">+ Create course</Link></div></section>
- <div className="mt-10 grid gap-4 sm:grid-cols-3"><div className="rounded-2xl border border-white/8 bg-[#111] p-5"><p className="text-xs uppercase tracking-widest text-zinc-600">Courses</p><p className="mt-2 text-3xl font-black">{courses.length}</p></div><div className="rounded-2xl border border-white/8 bg-[#111] p-5"><p className="text-xs uppercase tracking-widest text-zinc-600">Published</p><p className="mt-2 text-3xl font-black text-yellow-400">{courses.filter(c=>c.published).length}</p></div><div className="rounded-2xl border border-white/8 bg-[#111] p-5"><p className="text-xs uppercase tracking-widest text-zinc-600">Drafts</p><p className="mt-2 text-3xl font-black">{courses.filter(c=>!c.published).length}</p></div></div>
- <div className="mt-12"><p className="text-sm font-bold uppercase tracking-[.18em] text-yellow-400">Creator studio</p><h2 className="mt-2 text-3xl font-black">Your courses</h2></div>
- {loading?<div className="mt-7 rounded-2xl border border-white/8 bg-[#111] p-10 text-center text-yellow-400">Loading your courses...</div>:courses.length===0?<div className="mt-7 rounded-2xl border border-dashed border-white/10 bg-[#111] p-12 text-center"><h3 className="text-xl font-black">Nothing published yet</h3><p className="mt-2 text-zinc-500">Create your first course and start teaching.</p><Link to="/teacher/build-course" className="mt-6 inline-block rounded-xl bg-yellow-400 px-5 py-3 font-black text-black">Build a course</Link></div>:<div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{courses.map(course=><div key={course._id} className="overflow-hidden rounded-2xl border border-white/8 bg-[#111]"><div className="h-44 overflow-hidden"><img src={course.thumbnail||fallback} alt={course.title} className="h-full w-full object-cover"/></div><div className="p-5"><div className="flex items-start justify-between gap-3"><div><h3 className="font-black">{course.title}</h3><p className="mt-1 text-sm text-zinc-600">{course.category?.name||"Course"} · {course.lectures?.length||0} lectures</p></div><span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${course.published?'bg-emerald-400/10 text-emerald-400':'bg-orange-400/10 text-orange-400'}`}>{course.published?'Published':'Draft'}</span></div><p className="mt-4 text-lg font-black text-yellow-400">₹{course.price}</p><div className="mt-5 grid grid-cols-2 gap-2"><Link to={`/course/${course._id}`} className="rounded-xl border border-white/10 py-2.5 text-center text-sm font-bold text-zinc-300 hover:border-yellow-400/30 hover:text-yellow-400">View</Link><Link to={`/teacher/course/${course._id}/students`} className="rounded-xl bg-yellow-400 py-2.5 text-center text-sm font-black text-black">Students</Link></div>{!course.published&&<button onClick={()=>publishCourse(course._id)} className="mt-2.5 w-full rounded-xl border border-yellow-400/40 py-2.5 text-sm font-bold text-yellow-400 hover:bg-yellow-400 hover:text-black">Publish course</button>}</div></div>)}</div>}
- </main></div>;
+import { useAuth } from "../context/AuthContext";
+const fallback =
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1000&q=80";
+function TeacherProfile() {
+  const { user } = useAuth();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  async function getCourses() {
+    try {
+      const r = await API.get("/course/teacher-courses");
+      if (r.data.success) setCourses(r.data.data || []);
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Courses could not be loaded");
+    } finally {
+      setLoading(false);
+    }
+  }
+  async function publishCourse(id) {
+    try {
+      const r = await API.put(`/course/publish/${id}`);
+      if (r.data.success) {
+        toast.success("Course published successfully");
+        getCourses();
+      }
+    } catch (e) {
+      toast.error(e.response?.data?.message || "Course could not be published");
+    }
+  }
+  useEffect(() => {
+    if (user?.id) getCourses();
+  }, [user]);
+  return (
+    <div className="min-h-screen bg-[#080808]">
+      <Navbar />
+      <main className="mx-auto max-w-7xl px-5 py-10 lg:px-8">
+        <section className="relative overflow-hidden rounded-[28px] border border-white/8 bg-[#111] p-7 sm:p-9">
+          <div className="absolute right-0 top-0 h-48 w-48 rounded-full bg-yellow-400/10 blur-3xl" />
+          <div className="relative flex flex-col gap-7 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-5">
+              <div className="grid h-20 w-20 place-items-center rounded-2xl bg-yellow-400 text-3xl font-black text-black">
+                {user?.name?.charAt(0)?.toUpperCase()}
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[.18em] text-yellow-400">
+                  Teacher dashboard
+                </p>
+                <h1 className="mt-1 text-3xl font-black">{user?.name}</h1>
+                <p className="mt-1 text-zinc-500">{user?.email}</p>
+              </div>
+            </div>
+            <Link
+              to="/teacher/build-course"
+              className="rounded-xl bg-yellow-400 px-5 py-3 text-center text-sm font-black text-black hover:bg-yellow-300"
+            >
+              + Create course
+            </Link>
+          </div>
+        </section>
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-white/8 bg-[#111] p-5">
+            <p className="text-xs uppercase tracking-widest text-zinc-600">
+              Courses
+            </p>
+            <p className="mt-2 text-3xl font-black">{courses.length}</p>
+          </div>
+          <div className="rounded-2xl border border-white/8 bg-[#111] p-5">
+            <p className="text-xs uppercase tracking-widest text-zinc-600">
+              Published
+            </p>
+            <p className="mt-2 text-3xl font-black text-yellow-400">
+              {courses.filter((c) => c.published).length}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-white/8 bg-[#111] p-5">
+            <p className="text-xs uppercase tracking-widest text-zinc-600">
+              Drafts
+            </p>
+            <p className="mt-2 text-3xl font-black">
+              {courses.filter((c) => !c.published).length}
+            </p>
+          </div>
+        </div>
+        <div className="mt-12">
+          <p className="text-sm font-bold uppercase tracking-[.18em] text-yellow-400">
+            Creator studio
+          </p>
+          <h2 className="mt-2 text-3xl font-black">Your courses</h2>
+        </div>
+        {loading ? (
+          <div className="mt-7 rounded-2xl border border-white/8 bg-[#111] p-10 text-center text-yellow-400">
+            Loading your courses...
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="mt-7 rounded-2xl border border-dashed border-white/10 bg-[#111] p-12 text-center">
+            <h3 className="text-xl font-black">Nothing published yet</h3>
+            <p className="mt-2 text-zinc-500">
+              Create your first course and start teaching.
+            </p>
+            <Link
+              to="/teacher/build-course"
+              className="mt-6 inline-block rounded-xl bg-yellow-400 px-5 py-3 font-black text-black"
+            >
+              Build a course
+            </Link>
+          </div>
+        ) : (
+          <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {courses.map((course) => (
+              <div
+                key={course._id}
+                className="overflow-hidden rounded-2xl border border-white/8 bg-[#111]"
+              >
+                <div className="h-44 overflow-hidden">
+                  <img
+                    src={course.thumbnail || fallback}
+                    alt={course.title}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="font-black">{course.title}</h3>
+                      <p className="mt-1 text-sm text-zinc-600">
+                        {course.category?.name || "Course"} ·{" "}
+                        {course.lectures?.length || 0} lectures
+                      </p>
+                    </div>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${course.published ? "bg-emerald-400/10 text-emerald-400" : "bg-orange-400/10 text-orange-400"}`}
+                    >
+                      {course.published ? "Published" : "Draft"}
+                    </span>
+                  </div>
+                  <p className="mt-4 text-lg font-black text-yellow-400">
+                    ₹{course.price}
+                  </p>
+                  <div className="mt-5 grid grid-cols-2 gap-2">
+                    <Link
+                      to={`/course/${course._id}`}
+                      className="rounded-xl border border-white/10 py-2.5 text-center text-sm font-bold text-zinc-300 hover:border-yellow-400/30 hover:text-yellow-400"
+                    >
+                      View
+                    </Link>
+                    <Link
+                      to={`/teacher/course/${course._id}/students`}
+                      className="rounded-xl bg-yellow-400 py-2.5 text-center text-sm font-black text-black"
+                    >
+                      Students
+                    </Link>
+                  </div>
+                  {!course.published && (
+                    <button
+                      onClick={() => publishCourse(course._id)}
+                      className="mt-2.5 w-full rounded-xl border border-yellow-400/40 py-2.5 text-sm font-bold text-yellow-400 hover:bg-yellow-400 hover:text-black"
+                    >
+                      Publish course
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+    </div>
+  );
 }
 export default TeacherProfile;
